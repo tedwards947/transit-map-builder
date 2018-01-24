@@ -20,6 +20,7 @@ var COLORS = {
 
 var TOOLS = {
     none: 'none',
+    selectMove: 'select-move',
     bulldozer: 'bulldozer',
     station: 'station',
     info: 'info',
@@ -235,6 +236,11 @@ function deselectAllItems(){
 }
 
 function onStationClick(e, station){
+    //only perform selection if the select tool is... welll... selected!
+
+    if(selectedTool !== TOOLS.selectMove){
+        return;
+    }
     var wasPreviouslySelected = station.shape.selected;
     deselectAllItems();
 
