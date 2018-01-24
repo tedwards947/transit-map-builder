@@ -1,3 +1,6 @@
+
+![Transit Map Builder Logo](https://raw.githubusercontent.com/tedwards947/transit-map-builder/master/logo.png)
+
 # Transit Map Builder
 
 *Just started, don't do anything pls or even read it!* 
