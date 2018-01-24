@@ -1,4 +1,13 @@
+/*
+    THIS IS PAPERSCRIPT, this is not JavaScript.
 
+    This file is also implicitly wrapped in a scope, the "project",
+        available on document.window as `project`. 
+
+        Read more please http://paperjs.org/tutorials/getting-started/working-with-paper-js/
+
+
+*/
 var stationLayer;
 var lineLayer;
 
