@@ -1,144 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script type="text/javascript" src="js/lib/lodash.min.js"></script>
-<script type="text/javascript" src="js/lib/pathfinding-browser.min.js"></script>
-<script type="text/javascript" src="js/lib/paper-full.js"></script>
-
-<script type="text/javascript" src="js/src/protos.js"></script>
-<script type="text/paperscript" src="js/src/paperIndex.js" canvas="myCanvas">
-</script>
-
-
-
-<style>
-    body{
-        font-family: 'Helvetica';
-        background:lightgray
-    }
-    #container{
-        position:relative;
-    }
-    #myCanvas{
-        width:800px;
-        height: 800px;
-        border: 3px solid lightgray;
-        margin:5px 5px 0 0;
-        border-radius: 10px;
-        background:white;
-    }
-
-    #toolbox{
-        display:inline-block;
-        position:absolute;
-        top: 0;
-        background:white;
-
-        border: 2px solid black;
-        margin-left: 5px;
-        margin-top:5px;
-    }
-    #toolbox-text{
-        font-size:20px;
-        color:white;
-        background:black;
-        font-weight:bold;
-    }
-    #toolbox button{
-        display:block;
-        border: 1px solid white;
-        outline: none;
-        cursor: pointer;
-
-        font-size:30px;
-        margin:5px;
-
-        border-radius:8px;
-
-        height:45px;
-        width: 45px;
-    }
-    #toolbox button.selected{
-        border: 1px dashed red;
-    }
-
-    #toolbox button.line{
-        border-radius: 25px;
-        width:45px;
-        height:45px;
-    }
-
-    #select-move{
-        /* styling the select/move button by rotating it */
-        transform: rotate(-90deg);
-
-    }
-
-
-
-
-    header{
-        cursor:default;
-        background: #080706;
-        color:white;
-        width: 557px;
-
-        font-size:50px;
-        font-weight:bold;
-
-        /* padding-left: 2px; */
-
-        letter-spacing: 2px;
-        height:130px;
-    }
-    hr{
-        /* GROSS */
-        margin: 0;
-        -webkit-margin-before: 3px;
-        -webkit-margin-after: 3px;
-        border: 0;
-        border-bottom: 2px solid white;
-        height: 3px;
-        padding-top: 4px;
-    }
-
-    #header-text{
-        width:315px;
-        display:inline-block;
-        float:left;
-        padding-left: 2px;
-        cursor:default;
-    }
-    #line-logo{
-        background-color: #EE352E;
-        color: white;
-        font-size: 81px;
-        display: inline-block;
-        height: 90px;
-        padding: 10px;
-        width: 90px;
-        border-radius: 84px;
-        text-align: center;
-        position: relative;
-        top: 2px;
-    }
-    #arrow-logo{
-        height:118px;
-        transform:rotate(45deg);
-        position:absolute;
-
-    }
-</style>
+    <title>Transit Map Builder</title>
+    <link rel="stylesheet" type="text/css" href="styles/main.css" />
 </head>
 <body oncontextmenu="return false;">
 <!--oncontextmenu code needed bc paper.js can't preventDefault() the original mouse event-->
+
+
     <header>
-        <!-- <div id="logo-hr"></div> -->
         <hr/>
         <span id="header-text">Transit Map Builder</span>
         <span id="line-logo">1</span>
         <svg xmlns="http://www.w3.org/2000/svg" id="arrow-logo" data-name="Layer 1" viewBox="0 0 1115.46 920.14"><defs><style>.cls-1{fill:white;stroke:#000;stroke-miterlimit:10;stroke-width:5px;}</style></defs><title>arrow-1</title><polygon class="cls-1" points="1111.93 459.45 656.01 3.54 485.4 174.15 649.29 338.05 2.5 338.05 2.5 579.34 652.05 579.34 485.4 745.99 656.01 916.6 1111.93 460.69 1111.31 460.07 1111.93 459.45"/></svg>
     </header>
+
+
     <div id="container">
         <canvas id="myCanvas" resize hidpi="off"></canvas>
         <section id="toolbox">
@@ -156,6 +33,13 @@
         </section>
     </div>
 
-    
+    <!--Libs-->
+    <script type="text/javascript" src="js/lib/lodash.min.js"></script>
+    <script type="text/javascript" src="js/lib/pathfinding-browser.min.js"></script>
+    <script type="text/javascript" src="js/lib/paper-full.js"></script>
+
+    <!--source code. this needs to really be a build system thing but shrug emoji-->
+    <script type="text/javascript" src="js/src/protos.js"></script>
+    <script type="text/paperscript" src="js/src/paperIndex.js" canvas="myCanvas"></script>
 </body>
 </html>

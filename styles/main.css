@@ -1,0 +1,116 @@
+body{
+    font-family: 'Helvetica';
+    background:lightgray
+}
+#container{
+    position:relative;
+}
+#myCanvas{
+    width:800px;
+    height: 800px;
+    border: 3px solid lightgray;
+    margin:5px 5px 0 0;
+    border-radius: 10px;
+    background:white;
+}
+
+#toolbox{
+    display:inline-block;
+    position:absolute;
+    top: 0;
+    background:white;
+
+    border: 2px solid black;
+    margin-left: 5px;
+    margin-top:5px;
+}
+#toolbox-text{
+    font-size:20px;
+    color:white;
+    background:black;
+    font-weight:bold;
+}
+#toolbox button{
+    display:block;
+    border: 1px solid white;
+    outline: none;
+    cursor: pointer;
+
+    font-size:30px;
+    margin:5px;
+
+    border-radius:8px;
+
+    height:45px;
+    width: 45px;
+}
+#toolbox button.selected{
+    border: 1px dashed red;
+}
+
+#toolbox button.line{
+    border-radius: 25px;
+    width:45px;
+    height:45px;
+}
+
+#select-move{
+    /* styling the select/move button by rotating it */
+    transform: rotate(-90deg);
+
+}
+
+
+
+
+header{
+    cursor:default;
+    background: #080706;
+    color:white;
+    width: 557px;
+
+    font-size:50px;
+    font-weight:bold;
+
+    /* padding-left: 2px; */
+
+    letter-spacing: 2px;
+    height:130px;
+}
+hr{
+    /* GROSS */
+    margin: 0;
+    -webkit-margin-before: 3px;
+    -webkit-margin-after: 3px;
+    border: 0;
+    border-bottom: 2px solid white;
+    height: 3px;
+    padding-top: 4px;
+}
+
+#header-text{
+    width:315px;
+    display:inline-block;
+    float:left;
+    padding-left: 2px;
+    cursor:default;
+}
+#line-logo{
+    background-color: #EE352E;
+    color: white;
+    font-size: 81px;
+    display: inline-block;
+    height: 90px;
+    padding: 10px;
+    width: 90px;
+    border-radius: 84px;
+    text-align: center;
+    position: relative;
+    top: 2px;
+}
+#arrow-logo{
+    height:118px;
+    transform:rotate(45deg);
+    position:absolute;
+
+}
