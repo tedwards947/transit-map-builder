@@ -221,30 +221,81 @@ function onStationClick(e, station){
     if(selectedTool !== TOOLS.selectMove){
         return;
     }
-    var wasPreviouslySelected = station.shape.selected;
+    // var wasPreviouslySelected = station.shape.selected;
     deselectAllItems();
 
-    if (!wasPreviouslySelected){
-        //only select it if it wasn't already
+    // if (!wasPreviouslySelected){
+    // // only select it if it wasn't already
         station.shape.fullySelected = true;
+    // }
+}
+
+function onStationMouseUp(e, station){
+    station.isDragging = false;
+}
+
+function onStationMouseDown(e, station){
+    //deal with click/drag movement of station
+
+    if(station.shape.selected){
+        console.log('mousedown, station selected');
+
+        station.isDragging = true;
+    }
+
+}
+
+function onStationMouseDrag(e, station){
+
+    if(station.isDragging){
+
+        
+        var newMouseCoords = e.point;
+
+        var newNodeCoords = getNearestNodeCoordinates(newMouseCoords);
+
+        if(newNodeCoords.x === station.nodeCoords.x && newNodeCoords.y === station.nodeCoords.y){
+            //short circuit because the position hasn't changed.
+            return;
+        }
+
+        if(!isStationTooClose(newNodeCoords, station)){
+
+            station.nodeCoords = newNodeCoords;
+
+            var realCoords = getRealCoordinatesFromNodeCoordinates(newNodeCoords);
+            station.shape.position = new Point([realCoords.x, realCoords.y]);
+        } 
     }
 }
 
+function isStationTooClose(targetNodeCoords, selfStationObject){
+    //`selfStation` is if you want this to skip this station
+
+    var IS_TOO_CLOSE_DISTANCE = 4;
+
+    return stations.some(function(station){
+        if(selfStationObject){
+            //omit this one
+
+            if(selfStationObject.id === station.id){
+                return;
+            }
+        }
+        var distance = getDistance(station.nodeCoords, targetNodeCoords).d;
+        return distance <= IS_TOO_CLOSE_DISTANCE;
+    });
+}
 
 function createStation(mouseCoords){
     var nodeCoords = getNearestNodeCoordinates(mouseCoords);
 
-    console.log('createStation', mouseCoords, 'nodecoords', nodeCoords);
+    console.log('createStation', 'mouseCoords', mouseCoords, 'nodecoords', nodeCoords);
 
 
     var isEmpty = !_.get(nodes, [nodeCoords.y, nodeCoords.x]);
 
-    var IS_TOO_CLOSE_DISTANCE = 4;
-
-    var isTooClose = stations.some(function(station){
-        var distance = getDistance(station.nodeCoords, nodeCoords).d;
-        return distance <= 4;
-    });
+    var isTooClose = isStationTooClose(nodeCoords);
 
     //do some logic to see if we can?
     if(isEmpty && !isTooClose){
@@ -263,14 +314,18 @@ function createStation(mouseCoords){
 
         circle.onClick = function _onStationClick(e){
             onStationClick(e, station);
-            // var wasPreviouslySelected = e.target.selected;
-            // deselectAllItems();
+        };
 
-            // if (!wasPreviouslySelected){
-            //     //only select it if it wasn't already
-            //     circle.fullySelected = true;
-            // }
+        circle.onMouseDown = function _onStationMouseDown(e){
+            onStationMouseDown(e, station);
+        };
 
+        circle.onMouseUp = function _onStationMouseUp(e){
+            onStationMouseUp(e, station);
+        };
+        
+        circle.onMouseDrag = function _onStationMouseDrag(e){
+            onStationMouseDrag(e, station);
         };
 
         // //COMBINE THIS MOFO
@@ -297,6 +352,12 @@ function getNearestNodeCoordinates(coords){
     };
 }
 
+function getRealCoordinatesFromNodeCoordinates(coords){
+    return {
+        x: coords.x * NODE_SPACING,
+        y: coords.y * NODE_SPACING
+    };
+}
 
 
 function initNodes(){
@@ -332,7 +393,7 @@ function addEventListeners(){
 
         el.addEventListener('click', function(e){
             var toolType = e.target.dataset.tool;
-            var lineNumber = e.target.dataset.lineNumber
+            var lineNumber = e.target.dataset.lineNumber;
             
             clearSelectedClass();
             if (toolType !== selectedTool){
@@ -355,8 +416,10 @@ function addEventListeners(){
 
             }
 
-            //reset stuff like current line
+            //reset current line
             currentLine = undefined;
+            //reset any selected items
+            deselectAllItems();
 
         });
     });
@@ -368,28 +431,6 @@ function initLayers(){
     stationLayer.bringToFront();
     stationLayer.activate();
 
-    /*layer api
-addChild(item)
-insertChild(index, item)
-addChildren(items)
-insertChildren(index, items)
-insertAbove(item)
-insertBelow(item)
-sendToBack()
-bringToFront()
-appendTop(item)
-appendBottom(item)
-moveAbove(item)
-moveBelow(item)
-addTo(owner)
-copyTo(owner)
-reduce(options)
-remove()
-replaceWith(item)
-removeChildren()
-removeChildren(start[, end])
-reverseChildren()
-    */
 }
 function init() {
     initNodes();
@@ -405,7 +446,7 @@ function init() {
 init();   
 
 
-
+//THE LINES SHOULD LOOK LIKE THESE. UNCOMMENT AND ADMIRE THE BEAUTY of the corners... what's wrong with the ones on the line?
 // //testing line shit
 // var myPath = new Path();
 // myPath.strokeColor = '#fdf012'; //MTA yellow
