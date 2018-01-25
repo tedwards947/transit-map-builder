@@ -16,8 +16,8 @@ var COLORS = {
 var TOOLS = {
     none: 'none',
     selectMove: 'select-move',
+    text: 'text',
     bulldozer: 'bulldozer',
     station: 'station',
-    info: 'info',
     line: 'line'
 };
