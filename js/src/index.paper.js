@@ -12,7 +12,7 @@ var stationLayer;
 var lineLayer;
 
 var selectedTool = TOOLS.none;
-var selectedToolLine = -1;
+var selectedToolLineNumber = -1;
 
 var pathfindingGrid = new PF.Grid(CANVAS_WIDTH / NODE_SPACING, CANVAS_HEIGHT / NODE_SPACING);
 
@@ -160,10 +160,10 @@ function onLineMouseDown(mouseCoords){
 
 
     //what color should it be?
-    var colorKey = Object.keys(COLORS)[(+selectedToolLine -1)];
+    var colorKey = Object.keys(COLORS)[(+selectedToolLineNumber -1)];
     var color = COLORS[colorKey];
 
-    console.log('selected station', selectedStation, 'color', color, (+selectedToolLine - 1))
+    console.log('selected station', selectedStation, 'color', color, (+selectedToolLineNumber - 1))
 
     lineLayer.activate();
     var linePath = new Path();
@@ -396,7 +396,10 @@ function addEventListeners(){
             var lineNumber = e.target.dataset.lineNumber;
             
             clearSelectedClass();
-            if (toolType !== selectedTool){
+
+            //check if the user has picked a different tool or at least a different line
+            if (toolType !== selectedTool || lineNumber !== selectedToolLineNumber){
+;
                 selectedTool = toolType;
                 e.target.classList.add('selected')
             } else {
@@ -410,7 +413,7 @@ function addEventListeners(){
                     stationLayer.activate();
                 break;
                 case 'line':
-                    selectedToolLine = lineNumber
+                    selectedToolLineNumber = lineNumber
                     lineLayer.activate();
                 break;
 
