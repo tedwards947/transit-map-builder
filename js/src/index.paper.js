@@ -377,6 +377,7 @@ function selectDomElements(){
     domElements.buttons.station = document.querySelector('#station');
     domElements.buttons.info = document.querySelector('#info');
     domElements.buttons.line1 = document.querySelector('#line-1');
+    domElements.buttons.text = document.querySelector('#text');
     domElements.buttons.line2 = document.querySelector('#line-2');
     domElements.buttons.line3 = document.querySelector('#line-3');
     domElements.buttons.line4 = document.querySelector('#line-4');
