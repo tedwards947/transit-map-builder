@@ -159,6 +159,9 @@ function onLineMouseDown(mouseCoords){
     }
 
 
+
+
+
     //what color should it be?
     var colorKey = Object.keys(COLORS)[(+selectedToolLineNumber -1)];
     var color = COLORS[colorKey];
@@ -166,25 +169,51 @@ function onLineMouseDown(mouseCoords){
     console.log('selected station', selectedStation, 'color', color, (+selectedToolLineNumber - 1))
 
     lineLayer.activate();
-    var linePath = new Path();
-    linePath.strokeColor = color;
-    linePath.strokeWidth = LINE_WIDTH;
-    // linePath.add(new Point([nodeCoords.x * NODE_SPACING, nodeCoords.y * NODE_SPACING]));
 
-    var lineObj = {
-        type: 'line',
-        nodeCoords: {
-            start: nodeCoords,
-            end: undefined
-        },
-        shape: linePath
-    };
 
-    var line = new Line(linePath, nodeCoords, COLORS.yellow);
+    if (currentLine){
+        console.log('current line seelected')
 
-    lines.push(lineObj);
+        currentLine.nodeCoords.end = nodeCoords;
 
-    currentLine = lineObj;
+        //check if this station is already part of the ones associated to this line
+        var hasThisStationAlready = currentLine.stations.some(function(station){
+            return (selectedStation.id === station.id);
+        });
+        
+        if(!hasThisStationAlready){
+            currentLine.stations.push(selectedStation);
+        }
+
+        currentLine = undefined;
+
+    } else {
+
+        var linePath = new Path();
+        linePath.strokeColor = color;
+        linePath.strokeWidth = LINE_WIDTH;
+        
+        var lineObj = {
+            type: 'line',
+            nodeCoords: {
+                start: nodeCoords,
+                end: undefined
+            },
+            shape: linePath,
+            stations: [selectedStation]
+        };
+    
+        var line = new Line(linePath, nodeCoords, COLORS.yellow);
+    
+        lines.push(lineObj);
+
+        currentLine = lineObj;
+    }
+    console.log(currentLine);
+
+
+
+
 
 }
 
@@ -285,6 +314,15 @@ function isStationTooClose(targetNodeCoords, selfStationObject){
         var distance = getDistance(station.nodeCoords, targetNodeCoords).d;
         return distance <= IS_TOO_CLOSE_DISTANCE;
     });
+}
+
+function areNodeCoordsWithinBounds(nodeCoords){
+    //checks if the node coords are within the bounds of the canvas
+
+    //FINISH
+    nodeCoords.x >= 0 && nodeCoords.x <= NUM_NODES.x
+    nodeCoords.y >= 0 && nodeCoords.y <= NUM_NODES.y
+
 }
 
 function createStation(mouseCoords){
@@ -399,7 +437,6 @@ function addEventListeners(){
 
             //check if the user has picked a different tool or at least a different line
             if (toolType !== selectedTool || lineNumber !== selectedToolLineNumber){
-;
                 selectedTool = toolType;
                 e.target.classList.add('selected')
             } else {

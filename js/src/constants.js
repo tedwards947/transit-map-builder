@@ -3,6 +3,10 @@ var CANVAS_WIDTH = 800;
 var CANVAS_HEIGHT = 800;
 
 var NODE_SPACING = 10;
+var NUM_NODES = {
+    x: 80,
+    y: 80
+};
 
 var COLORS = {
     'yellow': '#FCCC0A',
