@@ -18,3 +18,13 @@ function Line(shape, startNodeCoords, color){
         end: undefined
     };
 }
+
+function TextBox(shape, realCoords, content){
+    this.type = 'textbox',
+    this.shape = shape;
+
+    this.realCoords = realCoords;
+    this.content = content;
+
+    this.isDragging = false;
+}

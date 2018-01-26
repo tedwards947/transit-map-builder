@@ -26,3 +26,10 @@ var TOOLS = {
     station: 'station',
     line: 'line'
 };
+
+
+var TEXT_EDIT_STYLING = {
+    padding: 5,
+    borderWidth: 1,
+    fontSize: 16
+};

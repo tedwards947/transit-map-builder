@@ -20,12 +20,15 @@ var pathfindingGrid = new PF.Grid(CANVAS_WIDTH / NODE_SPACING, CANVAS_HEIGHT / N
 var nodes = [];
 
 var domElements = {
-    buttons: {}
+    canvas: undefined,
+    buttons: {},
+    textInput: undefined
 };
 
 var lines = [];
 var currentLine;
 var stations = [];
+var textBoxes = [];
 
 var tools = [];
 
@@ -53,7 +56,7 @@ function onMouseMove(event){
 }
 
 function onMouseDown(event){
-
+    console.log('mousedown')
 
     //get coords
     var coords = {
@@ -68,10 +71,12 @@ function onMouseDown(event){
         case TOOLS.bulldozer: 
 
         break;
+        case TOOLS.text: 
+            createOrEditTextNode(coords);
+        break;
         case TOOLS.station: 
             //create a station? if some rules are met
             createStation(coords);
-
         break;
         case TOOLS.line:
             if(event.event.which === 3){
@@ -441,6 +446,110 @@ function createStation(mouseCoords){
 
 }
 
+function onTextboxClick(e, textbox){
+
+    if(selectedTool !== TOOLS.selectMove){
+        return;
+    }
+
+    deselectAllItems();
+
+    //select and move it
+    textbox.shape.fullySelected = true;
+}
+
+function onTextboxMouseUp(e, textbox){
+    textbox.isDragging = false;
+}
+function onTextboxMouseDown(e, textbox){
+    if(textbox.shape.selected){
+        textbox.isDragging = true;
+    }
+    textbox.fullySelected = true;
+
+}
+
+function onTextboxMouseDrag(e, textbox){
+    if(textbox.isDragging){
+
+        
+        var newMouseCoords = e.point;
+
+
+        if(newMouseCoords.x === textbox.realCoords.x && newMouseCoords.y === textbox.realCoords.y){
+            //short circuit because the position hasn't changed.
+            return;
+        }
+
+        //just move it
+
+        textbox.realCoords.x = newMouseCoords.x;
+        textbox.realCoords.y = newMouseCoords.y;
+
+        textbox.shape.position = new Point(newMouseCoords.x, newMouseCoords.y);
+    }
+}
+
+
+function doTextEdit(textbox){
+    console.log('doTextEdit', textbox);
+}
+
+function createOrEditTextNode(mouseCoords){
+    //hit test?
+
+    //check for a hit on a current textbox. if yes, teh user wants to edit the text
+    var hit = textBoxes.find(function(box){
+        return box.shape.hitTest(new Point(mouseCoords.x, mouseCoords.y))
+    });
+
+    if(hit){
+        doTextEdit(hit);
+        return;
+    }
+
+
+
+    showTextBox(mouseCoords, function onComplete(text, wrapperWidth, wrapperHeight, inputLeft, inputTop){
+        textLayer.activate();
+
+
+        var newXPosition = mouseCoords.x + TEXT_EDIT_STYLING.borderWidth + TEXT_EDIT_STYLING.padding + 5;
+        var newYPosition = mouseCoords.y + TEXT_EDIT_STYLING.borderWidth + TEXT_EDIT_STYLING.padding;
+
+        var textItemShape = new PointText({
+            content: text,
+            fontFamily: 'Helvetica',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            position: new Point(newXPosition, newYPosition)
+        });
+
+
+        var textboxObject = new TextBox(textItemShape, {x: newXPosition, y: newYPosition}, text);
+    
+
+
+        textItemShape.onClick = function _textboxOnClick(e){
+            onTextboxClick(e, textboxObject);
+        };
+
+        textItemShape.onMouseDrag = function _textboxOnMouseDrag(e){
+            onTextboxMouseDrag(e, textboxObject);
+        };
+        textItemShape.onMouseUp = function _textboxOnMouseUp(e){
+            onTextboxMouseUp(e, textboxObject);
+        };
+        textItemShape.onMouseDown = function _textboxOnMouseDown(e){
+            onTextboxMouseDown(e, textboxObject);
+        };
+
+        textBoxes.push(textboxObject);
+
+        console.log('complete called!', text, wrapperWidth, wrapperHeight)
+    });
+}
+
 
 function getNearestNodeCoordinates(coords){
     //converts x,y pixel coords into node coords
@@ -481,11 +590,23 @@ function selectDomElements(){
     domElements.buttons.line4 = document.querySelector('#line-4');
     domElements.buttons.line5 = document.querySelector('#line-5');
     domElements.buttons.line6 = document.querySelector('#line-6');
+
+    domElements.canvas = document.querySelector('#myCanvas');
 }
-function clearSelectedClass(){
+function resetUponToolboxSelection(){
+    //reset current line
+    currentLine = undefined;
+    //reset any selected items
+    deselectAllItems();
+
+    //remove toolbox selected
     _.forEach(domElements.buttons, function(el){
         el.classList.remove('selected');
     });
+
+    //remove any canvas classes (for cursor control)
+    domElements.canvas.classList.remove('text-cursor');
+
 }
 function addEventListeners(){
     _.forEach(domElements.buttons, function(el){
@@ -494,7 +615,7 @@ function addEventListeners(){
             var toolType = e.target.dataset.tool;
             var lineNumber = e.target.dataset.lineNumber;
             
-            clearSelectedClass();
+            resetUponToolboxSelection();
 
             //check if the user has picked a different tool or at least a different line
             if (toolType !== selectedTool || lineNumber !== selectedToolLineNumber){
@@ -507,20 +628,20 @@ function addEventListeners(){
             stationLayer.bringToFront();
             //switch active layer based on toolbox selection
             switch (toolType){
-                case 'station':
+                case TOOLS.station:
                     stationLayer.activate();
                 break;
-                case 'line':
+                case TOOLS.text: 
+                    textLayer.activate();
+                    domElements.canvas.classList.add('text-cursor');
+                case TOOLS.line:
                     selectedToolLineNumber = lineNumber
                     lineLayer.activate();
                 break;
 
             }
 
-            //reset current line
-            currentLine = undefined;
-            //reset any selected items
-            deselectAllItems();
+
 
         });
     });
@@ -529,7 +650,9 @@ function addEventListeners(){
 function initLayers(){
     stationLayer = new Layer();
     lineLayer = new Layer();
+    textLayer = new Layer();
     stationLayer.bringToFront();
+    textLayer.bringToFront();
     stationLayer.activate();
 
 }
