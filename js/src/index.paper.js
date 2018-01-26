@@ -141,8 +141,6 @@ function onLineMouseDown(mouseCoords){
 
     //check if the user has already clicked on a line
 
-    //if the user clicks elsewhere, delete the line
-
     //also have the capability to move the line?
 
 
@@ -157,8 +155,6 @@ function onLineMouseDown(mouseCoords){
         console.log('no selected station, can\'t do anything')
         return;
     }
-
-
 
 
 
@@ -180,7 +176,7 @@ function onLineMouseDown(mouseCoords){
         var hasThisStationAlready = currentLine.stations.some(function(station){
             return (selectedStation.id === station.id);
         });
-        
+
         if(!hasThisStationAlready){
             currentLine.stations.push(selectedStation);
         }
@@ -250,13 +246,10 @@ function onStationClick(e, station){
     if(selectedTool !== TOOLS.selectMove){
         return;
     }
-    // var wasPreviouslySelected = station.shape.selected;
+
     deselectAllItems();
 
-    // if (!wasPreviouslySelected){
-    // // only select it if it wasn't already
-        station.shape.fullySelected = true;
-    // }
+    station.shape.fullySelected = true;
 }
 
 function onStationMouseUp(e, station){
@@ -267,8 +260,6 @@ function onStationMouseDown(e, station){
     //deal with click/drag movement of station
 
     if(station.shape.selected){
-        console.log('mousedown, station selected');
-
         station.isDragging = true;
     }
 
@@ -289,14 +280,84 @@ function onStationMouseDrag(e, station){
         }
 
         if(!isStationTooClose(newNodeCoords, station)){
-
-            station.nodeCoords = newNodeCoords;
-
-            var realCoords = getRealCoordinatesFromNodeCoordinates(newNodeCoords);
-            station.shape.position = new Point([realCoords.x, realCoords.y]);
+            moveStation(newNodeCoords, station);
         } 
     }
 }
+
+function moveStation(destinationNodeCoords, station){
+    //need to move the station to a new position, and recalculate all the line paths!
+    if(!station){
+        console.log('STATION UNDEFINED')
+    }
+    station.nodeCoords = destinationNodeCoords;
+
+    var realCoords = getRealCoordinatesFromNodeCoordinates(destinationNodeCoords);
+    station.shape.position = new Point([realCoords.x, realCoords.y]);
+
+    //get all impacted lines, and figures out a new path for them between the stations
+    var impactedLines = _.filter(lines, function(line){
+        
+        //find lines which have this station's ID
+        return line.stations.some(function(_station){
+            return _station.id === station.id;
+        });
+    });
+
+    console.log('Lines impacted:', impactedLines);
+
+
+    redrawLines(impactedLines);
+
+
+}
+
+
+function redrawLines(linesToRedrawArray){
+
+    _.forEach(linesToRedrawArray, function(line){
+
+        if(!line){
+            console.log('LINE UNDEFINED')
+        }
+        //clear the old path
+        line.shape.removeSegments();
+
+        var finder = new PF.JumpPointFinder({
+            allowDiagonal: true
+        });
+
+        var station0 = line.stations[0];
+        var station1 = line.stations[1];
+
+        if(!station0 || !station1){
+            console.log('0', station0, '1', station1)
+            throw 'no station'
+        }
+
+        //clone the grid because a grid is destroyed once it's been used to find a path.
+        var backupGrid = pathfindingGrid.clone();
+
+        var path = finder.findPath(station0.nodeCoords.x, station0.nodeCoords.y, station1.nodeCoords.x, station1.nodeCoords.y, backupGrid);
+
+        lineLayer.activate();
+
+        _.forEach(path, function(pathPoint){
+            var x = pathPoint[0] * NODE_SPACING;
+            var y = pathPoint[1] * NODE_SPACING;
+            if(!line){
+                console.log('LINE UNDEFINED!!')
+            }
+            line.shape.add(new Point([x, y]));
+        });
+
+        roundPath(line.shape, LINE_ROUNDING_RADIUS);
+
+    });
+
+
+}
+
 
 function isStationTooClose(targetNodeCoords, selfStationObject){
     //`selfStation` is if you want this to skip this station
