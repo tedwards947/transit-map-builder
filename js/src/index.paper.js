@@ -44,10 +44,7 @@ function onMouseMove(event){
         case TOOLS.none: 
 
         break;
-        case TOOLS.line: //generalize this you twat!
-            // console.log('item', event.item, 'lastpoint', event.lastPoint, 'middlePoint', event.middlePoint, 'modifiers', event.modifiers)
-            // console.log('event', event)
-
+        case TOOLS.line:
             if (currentLine){
                 onLineMouseMove(coords)
             }
@@ -56,7 +53,6 @@ function onMouseMove(event){
 }
 
 function onMouseDown(event){
-    console.log('mousedown')
 
     //get coords
     var coords = {
@@ -100,7 +96,6 @@ function onLineRightClick(coords){
 
 
 function onLineMouseMove(mouseCoords){
-    // console.log('move', currentLine)
 
     currentLine.shape.removeSegments();
     var finder = new PF.JumpPointFinder({
@@ -157,7 +152,7 @@ function onLineMouseDown(mouseCoords){
     });
 
     if(!selectedStation){
-        console.log('no selected station, can\'t do anything')
+        // console.log('no selected station, can\'t do anything')
         return;
     }
 
@@ -167,13 +162,12 @@ function onLineMouseDown(mouseCoords){
     var colorKey = Object.keys(COLORS)[(+selectedToolLineNumber -1)];
     var color = COLORS[colorKey];
 
-    console.log('selected station', selectedStation, 'color', color, (+selectedToolLineNumber - 1))
+    // console.log('selected station', selectedStation, 'color', color, (+selectedToolLineNumber - 1))
 
     lineLayer.activate();
 
 
     if (currentLine){
-        console.log('current line seelected')
 
         currentLine.nodeCoords.end = nodeCoords;
 
@@ -210,11 +204,6 @@ function onLineMouseDown(mouseCoords){
 
         currentLine = lineObj;
     }
-    console.log(currentLine);
-
-
-
-
 
 }
 
@@ -293,7 +282,7 @@ function onStationMouseDrag(e, station){
 function moveStation(destinationNodeCoords, station){
     //need to move the station to a new position, and recalculate all the line paths!
     if(!station){
-        console.log('STATION UNDEFINED')
+        return
     }
     station.nodeCoords = destinationNodeCoords;
 
@@ -309,22 +298,16 @@ function moveStation(destinationNodeCoords, station){
         });
     });
 
-    console.log('Lines impacted:', impactedLines);
+    // console.log('Lines impacted:', impactedLines);
 
 
     redrawLines(impactedLines);
-
-
 }
 
 
 function redrawLines(linesToRedrawArray){
 
     _.forEach(linesToRedrawArray, function(line){
-
-        if(!line){
-            console.log('LINE UNDEFINED')
-        }
         //clear the old path
         line.shape.removeSegments();
 
@@ -336,8 +319,10 @@ function redrawLines(linesToRedrawArray){
         var station1 = line.stations[1];
 
         if(!station0 || !station1){
+            //crappy error statement .fix later.
+
             console.log('0', station0, '1', station1)
-            throw 'no station'
+            throw 'no station';
         }
 
         //clone the grid because a grid is destroyed once it's been used to find a path.
@@ -350,9 +335,6 @@ function redrawLines(linesToRedrawArray){
         _.forEach(path, function(pathPoint){
             var x = pathPoint[0] * NODE_SPACING;
             var y = pathPoint[1] * NODE_SPACING;
-            if(!line){
-                console.log('LINE UNDEFINED!!')
-            }
             line.shape.add(new Point([x, y]));
         });
 
@@ -394,7 +376,7 @@ function areNodeCoordsWithinBounds(nodeCoords){
 function createStation(mouseCoords){
     var nodeCoords = getNearestNodeCoordinates(mouseCoords);
 
-    console.log('createStation', 'mouseCoords', mouseCoords, 'nodecoords', nodeCoords);
+    // console.log('createStation', 'mouseCoords', mouseCoords, 'nodecoords', nodeCoords);
 
 
     var isEmpty = !_.get(nodes, [nodeCoords.y, nodeCoords.x]);
@@ -545,8 +527,6 @@ function createOrEditTextNode(mouseCoords){
         };
 
         textBoxes.push(textboxObject);
-
-        console.log('complete called!', text, wrapperWidth, wrapperHeight)
     });
 }
 
