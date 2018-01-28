@@ -479,6 +479,7 @@ function redrawLines(linesToRedrawArray){
             //crappy error statement .fix later.
 
             console.log('0', station0, '1', station1)
+            debugger;
             throw 'no station';
         }
 

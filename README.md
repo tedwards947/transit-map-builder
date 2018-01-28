@@ -18,3 +18,8 @@ Run this locally using python's `http-serve`
 * change the line initiation from being a canvas mousedown to the station mousedown
 * add line moving
 * add text editing
+* add a way to show parallel lines
+
+## Known issues
+* Sometimes when moving a station, an associated line won't follow
+* Sometimes when deleting a station, associated lines won't be deleted
