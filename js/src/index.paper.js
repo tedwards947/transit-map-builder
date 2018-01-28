@@ -60,28 +60,82 @@ function onMouseDown(event){
         y: event.point.y
     };
 
-    switch (selectedTool){
-        case TOOLS.none: 
+    if(event.event.which === 1){
+        switch (selectedTool){
+            case TOOLS.none: 
 
-        break;
-        case TOOLS.bulldozer: 
-            bulldoze(coords);
-        break;
-        case TOOLS.text: 
-            createOrEditTextNode(coords);
-        break;
-        case TOOLS.station: 
-            //create a station? if some rules are met
-            createStation(coords);
-        break;
-        case TOOLS.line:
-            if(event.event.which === 3){
-                onLineRightClick(coords);
-            }
-            onLineMouseDown(coords);
-        break;
+            break;
+            case TOOLS.bulldozer: 
+                bulldoze(coords);
+            break;
+            case TOOLS.text: 
+                createOrEditTextNode(coords);
+            break;
+            case TOOLS.station: 
+                //create a station? if some rules are met
+                createStation(coords);
+            break;
+            case TOOLS.line:
+                onLineMouseDown(coords);
+            break;
+        }
+    }
+    else if(event.event.which === 3){
+        switch (selectedTool){
+            case TOOLS.selectMove:
+
+                deselectAllItems();
+            break;
+            case TOOLS.line:
+                if(event.event.which === 3){
+                    onLineRightClick(coords);
+                }
+            break;
+            default:
+
+        }
     }
 }
+
+
+function onShapeMouseLeaveForCursorSetting(event, obj){
+    domElements.canvas.className = '';
+}
+function onShapeMouseEnterForCursorSetting(event, obj){
+    //change the cursor of the object based on the tool selected and the object type
+
+    var objectType = obj.type;
+
+
+    switch(selectedTool){
+        case TOOLS.text: 
+            domElements.canvas.className = 'text-cursor';
+
+        break;
+        case TOOLS.selectMove:
+            domElements.canvas.className = 'pointer';
+
+            if (obj.shape.selected === true) {
+                domElements.canvas.className = 'move';
+            }
+        break;
+        case TOOLS.line:
+            if(obj.type = OBJECT_TYPES.station){
+                domElements.canvas.className = 'pointer';
+            }
+        break;
+        case TOOLS.bulldozer:
+            domElements.canvas.className = 'crosshair';
+        break;
+        default:
+            domElements.canvas.className = '';
+    }
+
+
+}
+
+
+
 function onLineRightClick(coords){
     //on line right click
     console.log('onLineRightClick')
@@ -117,6 +171,9 @@ function bulldoze(mouseCoords){
                     deleteTextBox(obj);
                 break;
             }
+
+            //reset the cursor to not be teh crosshair kind
+            domElements.canvas.className = '';
         }
     });
 }
@@ -258,10 +315,11 @@ function onLineMouseDown(mouseCoords){
 
     } else {
 
+        //no line already, so make a new
         var linePath = new Path();
         linePath.strokeColor = color;
         linePath.strokeWidth = LINE_WIDTH;
-        
+  
         var lineObj = {
             type: 'line',
             nodeCoords: {
@@ -277,6 +335,14 @@ function onLineMouseDown(mouseCoords){
         lines.push(lineObj);
 
         currentLine = lineObj;
+
+
+        linePath.onMouseEnter = function _onLinePathMouseEnter(e){
+            onShapeMouseEnterForCursorSetting(e, lineObj);
+        };
+        linePath.onMouseLeave = function _onLinePathMouseLeave(e){
+            onShapeMouseLeaveForCursorSetting(e, lineObj);
+        };
     }
 
 }
@@ -318,6 +384,9 @@ function onStationClick(e, station){
     deselectAllItems();
 
     station.shape.fullySelected = true;
+
+    //change the mouse cursor to be 'move'
+    domElements.canvas.className = 'move';
 }
 
 function onStationMouseUp(e, station){
@@ -488,6 +557,14 @@ function createStation(mouseCoords){
             onStationMouseDrag(e, station);
         };
 
+        circle.onMouseEnter = function _onStationMouseEnter(e){
+            onShapeMouseEnterForCursorSetting(e, station);
+        };
+
+        circle.onMouseLeave = function _onStationMouseLeave(e){
+            onShapeMouseLeaveForCursorSetting(e, station);
+        };
+
         // //COMBINE THIS MOFO
         stations.push(station);
 
@@ -512,6 +589,9 @@ function onTextboxClick(e, textbox){
 
     //select and move it
     textbox.shape.fullySelected = true;
+
+    //change the cursor to the move cursor
+    domElements.canvas.className = 'move';
 }
 
 function onTextboxMouseUp(e, textbox){
@@ -521,6 +601,10 @@ function onTextboxMouseDown(e, textbox){
     if(textbox.shape.selected){
         textbox.isDragging = true;
     }
+
+
+    //change the cursor to the move cursor
+    domElements.canvas.className = 'move';
     textbox.fullySelected = true;
 
 }
@@ -599,6 +683,12 @@ function createOrEditTextNode(mouseCoords){
         textItemShape.onMouseDown = function _textboxOnMouseDown(e){
             onTextboxMouseDown(e, textboxObject);
         };
+        textItemShape.onMouseEnter = function _textboxOnMouseEnter(e){
+            onShapeMouseEnterForCursorSetting(e, textboxObject);
+        };
+        textItemShape.onMouseLeave = function _textboxOnMouseLeave(e){
+            onShapeMouseLeaveForCursorSetting(e, textboxObject);
+        };
 
         textBoxes.push(textboxObject);
     });
@@ -647,6 +737,8 @@ function selectDomElements(){
 
     domElements.canvas = document.querySelector('#myCanvas');
 }
+
+// function reset
 function resetUponToolboxSelection(){
     //reset current line
     currentLine = undefined;
@@ -659,7 +751,9 @@ function resetUponToolboxSelection(){
     });
 
     //remove any canvas classes (for cursor control)
-    domElements.canvas.classList.remove('text-cursor');
+    domElements.canvas.className = '';
+
+    
 
 }
 function addEventListeners(){

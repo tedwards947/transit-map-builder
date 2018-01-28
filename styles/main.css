@@ -18,6 +18,16 @@ body{
     cursor:text;
 }
 
+#myCanvas.move{
+    cursor:move;
+}
+#myCanvas.pointer{
+    cursor:pointer;
+}
+#myCanvas.crosshair{
+    cursor:crosshair;
+}
+
 #toolbox{
     display:inline-block;
     position:absolute;

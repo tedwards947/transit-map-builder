@@ -27,6 +27,11 @@ var TOOLS = {
     line: 'line'
 };
 
+var OBJECT_TYPES = {
+    line: 'line',
+    textBox: 'textBox',
+    station: 'station'
+};
 
 var TEXT_EDIT_STYLING = {
     padding: 5,
