@@ -205,7 +205,7 @@ function onLineMouseMove(mouseCoords){
         currentLine.shape.add(new Point([x, y]));
     });
 
-    roundPath(currentLine.shape, 10);
+    roundPath(currentLine.shape, LINE_ROUNDING_RADIUS);
 
 }
 
