@@ -15,3 +15,6 @@ Run this locally using python's `http-serve`
 
 ## Todos
 * Add build system to compile javascript
+* change the line initiation from being a canvas mousedown to the station mousedown
+* add line moving
+* add text editing
