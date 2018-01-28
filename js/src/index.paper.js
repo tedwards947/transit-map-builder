@@ -63,7 +63,7 @@ function onMouseDown(event){
     if(event.event.which === 1){
         switch (selectedTool){
             case TOOLS.none: 
-
+                //nada!
             break;
             case TOOLS.bulldozer: 
                 bulldoze(coords);
@@ -76,7 +76,7 @@ function onMouseDown(event){
                 createStation(coords);
             break;
             case TOOLS.line:
-                onLineMouseDown(coords);
+                //not sure
             break;
         }
     }
@@ -267,7 +267,7 @@ function onLineMouseMove(mouseCoords){
 }
 
 //RENAME THIS METHOD!
-function onLineMouseDown(mouseCoords){
+function handleStationLineClick(station){
     //check if the user clicked on a station
 
     //check if the user has already clicked on a line
@@ -276,46 +276,47 @@ function onLineMouseDown(mouseCoords){
 
 
 
-    //convert to nodeCoords
-    var nodeCoords = getNearestNodeCoordinates(mouseCoords);
-    var selectedStation = stations.find(function(station){
-        return nodeCoords.x === station.nodeCoords.x && nodeCoords.y === station.nodeCoords.y;
-    });
+    // //convert to nodeCoords
+    // var nodeCoords = getNearestNodeCoordinates(mouseCoords);
+    // var selectedStation = stations.find(function(station){
+    //     return nodeCoords.x === station.nodeCoords.x && nodeCoords.y === station.nodeCoords.y;
+    // });
 
-    if(!selectedStation){
-        // console.log('no selected station, can\'t do anything')
-        return;
-    }
+    // if(!selectedStation){
+    //     // console.log('no selected station, can\'t do anything')
+    //     return;
+    // }
 
 
+
+    var nodeCoords = station.nodeCoords;
 
     //what color should it be?
     var colorKey = Object.keys(COLORS)[(+selectedToolLineNumber -1)];
     var color = COLORS[colorKey];
 
-    // console.log('selected station', selectedStation, 'color', color, (+selectedToolLineNumber - 1))
 
     lineLayer.activate();
 
-
     if (currentLine){
+        //the user is already drawing a line
 
         currentLine.nodeCoords.end = nodeCoords;
 
         //check if this station is already part of the ones associated to this line
-        var hasThisStationAlready = currentLine.stations.some(function(station){
-            return (selectedStation.id === station.id);
+        var hasThisStationAlready = currentLine.stations.some(function(_station){
+            return (station.id === _station.id);
         });
 
         if(!hasThisStationAlready){
-            currentLine.stations.push(selectedStation);
+            currentLine.stations.push(station);
         }
 
         currentLine = undefined;
 
     } else {
-
         //no line already, so make a new
+
         var linePath = new Path();
         linePath.strokeColor = color;
         linePath.strokeWidth = LINE_WIDTH;
@@ -327,7 +328,7 @@ function onLineMouseDown(mouseCoords){
                 end: undefined
             },
             shape: linePath,
-            stations: [selectedStation]
+            stations: [station]
         };
     
         var line = new Line(linePath, nodeCoords, COLORS.yellow);
@@ -374,19 +375,27 @@ function deselectAllItems(){
     });
 }
 
+
+//CHANGE THIS TO BE instead powered by the moment
 function onStationClick(e, station){
     //only perform selection if the select tool is... welll... selected!
 
-    if(selectedTool !== TOOLS.selectMove){
-        return;
+    switch (selectedTool){
+        case TOOLS.selectMove:
+            deselectAllItems();
+
+            station.shape.fullySelected = true;
+        
+            //change the mouse cursor to be 'move'
+            domElements.canvas.className = 'move';
+        break;
+        case TOOLS.line:
+            //only do this if we're left-clicking
+            if(e.event.which === 1){
+                handleStationLineClick(station);
+            }
+        break;
     }
-
-    deselectAllItems();
-
-    station.shape.fullySelected = true;
-
-    //change the mouse cursor to be 'move'
-    domElements.canvas.className = 'move';
 }
 
 function onStationMouseUp(e, station){
