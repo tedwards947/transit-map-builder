@@ -65,7 +65,7 @@ function onMouseDown(event){
 
         break;
         case TOOLS.bulldozer: 
-
+            bulldoze(coords);
         break;
         case TOOLS.text: 
             createOrEditTextNode(coords);
@@ -94,7 +94,84 @@ function onLineRightClick(coords){
     currentLine = undefined;
 }
 
+function bulldoze(mouseCoords){
 
+    //look for items whose shapes pass a hit test
+
+    //concat all the lines, stations, and textboxes, then loop through them
+    _.forEach(_.concat(lines, stations, textBoxes), function (obj){
+
+        //get their shape, do a hit test
+
+        var result = obj.shape.hitTest(new Point(mouseCoords.x, mouseCoords.y));
+
+        if(result){
+            switch (obj.type){
+                case 'line':
+                    deleteLine(obj);
+                break;
+                case 'station':
+                    deleteStation(obj);
+                break;
+                case 'textbox':
+                    deleteTextBox(obj);
+                break;
+            }
+        }
+    });
+}
+
+function deleteLine(lineObj){
+    var id = lineObj.id;
+
+    _.remove(lines, function(line){
+        console.log('loop')
+        return id === line.id;
+    });
+
+    lineObj.shape.remove();
+
+    delete lineObj;
+}
+function deleteTextBox(textBoxObj){
+    var id = textBoxObj.id;
+
+    _.remove(textBoxes, function(_textbox){
+        return id === _textbox.id;
+    });
+
+    textBoxObj.shape.remove();
+
+    delete textBoxObj;
+}
+function deleteStation(stationObj){
+
+    //delete associated lines 
+
+    //find lines and delete them
+    _.forEach(lines, function(line){
+        var isImpacted =  line.stations.some(function(_station){
+            console.log('_station', _station, 'stationObj.id', stationObj.id)
+            return _station.id === stationObj.id;
+        });
+
+        if(isImpacted){
+            deleteLine(line);
+        }
+    });
+
+    var id = stationObj.id;
+
+    _.remove(stations, function(_station){
+        return id === _station.id;
+    });
+
+    stationObj.shape.remove();
+
+    delete stationObj;
+}
+
+//RENAME THIS METHOD!
 function onLineMouseMove(mouseCoords){
 
     currentLine.shape.removeSegments();
@@ -125,17 +202,14 @@ function onLineMouseMove(mouseCoords){
     path.forEach(function(pathPoint){
         var x = pathPoint[0] * NODE_SPACING;
         var y = pathPoint[1] * NODE_SPACING;
-
-        // myPath.add(new Point([myX, myY]));
         currentLine.shape.add(new Point([x, y]));
     });
 
     roundPath(currentLine.shape, 10);
 
-
-    //try to draw a line to the mouse!
 }
 
+//RENAME THIS METHOD!
 function onLineMouseDown(mouseCoords){
     //check if the user clicked on a station
 

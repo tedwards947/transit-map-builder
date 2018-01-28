@@ -12,11 +12,14 @@ function Station(shape, nodeCoords){
 function Line(shape, startNodeCoords, color){
     this.type = 'line';
     this.shape = shape;
+    this.stations = [];
 
     this.nodeCoords = {
         start: startNodeCoords,
         end: undefined
     };
+
+    this.id = Math.random();
 }
 
 function TextBox(shape, realCoords, content){
@@ -27,4 +30,6 @@ function TextBox(shape, realCoords, content){
     this.content = content;
 
     this.isDragging = false;
+
+    this.id = Math.random();
 }
