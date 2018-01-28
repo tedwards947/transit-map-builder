@@ -78,7 +78,7 @@ function onMouseDown(event){
             if(event.event.which === 3){
                 onLineRightClick(coords);
             }
-            onLineMouseDown(coords)
+            onLineMouseDown(coords);
         break;
     }
 }
@@ -496,8 +496,8 @@ function createOrEditTextNode(mouseCoords){
         textLayer.activate();
 
 
-        var newXPosition = mouseCoords.x + TEXT_EDIT_STYLING.borderWidth + TEXT_EDIT_STYLING.padding + 5;
-        var newYPosition = mouseCoords.y + TEXT_EDIT_STYLING.borderWidth + TEXT_EDIT_STYLING.padding;
+        var newXPosition = mouseCoords.x + TEXT_EDIT_STYLING.borderWidth + TEXT_EDIT_STYLING.padding + 14;
+        var newYPosition = mouseCoords.y + TEXT_EDIT_STYLING.borderWidth + TEXT_EDIT_STYLING.padding + 2;
 
         var textItemShape = new PointText({
             content: text,
