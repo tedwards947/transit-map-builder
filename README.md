@@ -3,18 +3,20 @@
 
 # Transit Map Builder
 
-*Just started, don't do anything pls or even read it!* 
-
-Run this locally using python's `http-serve`
+Run this locally using a local file server:
+* Python's `http-serve`
+* Node's `http-server` (install with `npm install http-server -g`)
 
 ## Development 
 * This Project uses <a href="https://github.com/paperjs/paper.js">Paper.js</a> for graphics and <a href="https://github.com/qiao/PathFinding.js/">pathfinding.js</a> for pathfinding used in line drawing. Please read up on them a bit. 
-* <a href="http://paperjs.org/tutorials/getting-started/working-with-paper-js/">Read about Paper.js and its basic API</a>
-* Try to use SVG or CSS for graphics instead of images
+* <a href="http://paperjs.org/tutorials/getting-started/working-with-paper-js/">Paper.js and its basic API</a>
+* Try to use SVG or CSS for graphics outside of the canvas instead of images
+* Read CODE_OF_CONDUCT.md
     
 
 ## Todos
-* Add build system to compile javascript
+* Add build system to compile and bundle javascript
+  * Perhaps use <a href="https://github.com/aprowe/paper-loader">paper-loader</a> with webpack? 
 * change the line initiation from being a canvas mousedown to the station mousedown
 * add line moving
 * add text editing
