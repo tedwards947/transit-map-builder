@@ -46,7 +46,7 @@ function onMouseMove(event){
         break;
         case TOOLS.line:
             if (currentLine){
-                onLineMouseMove(coords)
+                followMouseAndDrawLine(coords)
             }
         break;
     }
@@ -229,7 +229,7 @@ function deleteStation(stationObj){
 }
 
 //RENAME THIS METHOD!
-function onLineMouseMove(mouseCoords){
+function followMouseAndDrawLine(mouseCoords){
 
     currentLine.shape.removeSegments();
     var finder = new PF.JumpPointFinder({
@@ -266,7 +266,6 @@ function onLineMouseMove(mouseCoords){
 
 }
 
-//RENAME THIS METHOD!
 function handleStationLineClick(station){
     //check if the user clicked on a station
 
@@ -771,11 +770,11 @@ function addEventListeners(){
         el.addEventListener('click', function(e){
             var toolType = e.target.dataset.tool;
             var lineNumber = e.target.dataset.lineNumber;
-            
+
             resetUponToolboxSelection();
 
             //check if the user has picked a different tool or at least a different line
-            if (toolType !== selectedTool || lineNumber !== selectedToolLineNumber){
+            if (toolType !== selectedTool || (toolType === TOOLS.line && lineNumber !== selectedToolLineNumber)){
                 selectedTool = toolType;
                 e.target.classList.add('selected')
             } else {
