@@ -44,9 +44,11 @@ function onTextboxButtonClick(){
         _onCompleteCallback(text, wrapperRect.width, wrapperRect.height);
 
         //hide the box now
-
-        textDomElements.wrapper.style.display = 'none';
+        hideTextBox();
     }
+}
+function hideTextBox(){
+    textDomElements.wrapper.style.display = 'none';
 }
 
 

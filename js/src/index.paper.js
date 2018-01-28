@@ -60,10 +60,16 @@ function onMouseDown(event){
         y: event.point.y
     };
 
-    if(event.event.which === 1){
+    if(event.event.which === 1){ //left click
         switch (selectedTool){
             case TOOLS.none: 
                 //nada!
+            break;
+            case TOOLS.selectMove:
+                //clear selection if nothing is hit
+                if(!project.hitTest(new Point(coords.x, coords.y))){
+                    deselectAllItems();
+                }
             break;
             case TOOLS.bulldozer: 
                 bulldoze(coords);
@@ -83,7 +89,7 @@ function onMouseDown(event){
     else if(event.event.which === 3){
         switch (selectedTool){
             case TOOLS.selectMove:
-
+                //deselect everything in right click
                 deselectAllItems();
             break;
             case TOOLS.line:
@@ -761,7 +767,8 @@ function resetUponToolboxSelection(){
     //remove any canvas classes (for cursor control)
     domElements.canvas.className = '';
 
-    
+    //reset text editing
+    hideTextBox();
 
 }
 function addEventListeners(){
