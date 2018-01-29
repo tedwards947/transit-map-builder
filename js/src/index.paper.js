@@ -16,6 +16,8 @@ var selectedTool = TOOLS.none;
 var selectedToolLineNumber = -1;
 var selectedStickerNumber = -1;
 var selectedStickerColor = '';
+var selectedStickerSymbol = '';
+var stickerFollowingMouse = null;
 
 var pathfindingGrid = new PF.Grid(CANVAS_WIDTH / NODE_SPACING, CANVAS_HEIGHT / NODE_SPACING);
 
@@ -53,6 +55,10 @@ function onMouseMove(event){
                 followMouseAndDrawLine(coords)
             }
         break;
+        case TOOLS.sticker: 
+            if(selectedStickerSymbol){
+                followMouseWithSticker(coords); 
+            }
     }
 }
 
@@ -85,8 +91,8 @@ function onMouseDown(event){
                 //create a station? if some rules are met
                 createStation(coords);
             break;
-            case TOOLS.line:
-                //not sure
+            case TOOLS.sticker:
+                createSticker(coords);
             break;
         }
     }
@@ -238,7 +244,33 @@ function deleteStation(stationObj){
     delete stationObj;
 }
 
-//RENAME THIS METHOD!
+
+function createSticker(mouseCoords){
+
+    var shape = stickerFollowingMouse.clone();
+    var stickerObj = new Sticker(shape, mouseCoords, selectedStickerSymbol);
+
+    //add event listeners!
+
+}
+
+function followMouseWithSticker(mouseCoords){
+    //makes a depiction of the sticker follow the mouse
+    if(stickerFollowingMouse){
+        stickerFollowingMouse.position = new Point(mouseCoords.x, mouseCoords.y);
+
+    } else {
+        stickerFollowingMouse = new PointText({
+            content: selectedStickerSymbol,
+            fillColor: selectedStickerColor,
+            fontFamily: 'Helvetica',
+            fontSize: '20px',
+            fontWeight: 'bold',
+            position: new Point(mouseCoords.x, mouseCoords.y)
+        });
+    }
+}
+
 function followMouseAndDrawLine(mouseCoords){
 
     currentLine.shape.removeSegments();
@@ -550,7 +582,7 @@ function createStation(mouseCoords){
 
         //do we still need this?
         _.set(nodes, [nodeCoords.y, nodeCoords.x], 'station');
-
+        stationLayer.activate();
         var circle = new Path.Circle(new Point([nodeCoords.x * NODE_SPACING, nodeCoords.y * NODE_SPACING]), 10);
         circle.strokeColor = 'black';
         circle.fillColor = 'white';
@@ -788,6 +820,16 @@ function resetUponToolboxSelection(){
         el.classList.remove('selected');
     });
 
+    if(stickerFollowingMouse){
+        stickerFollowingMouse.remove();
+        stickerFollowingMouse = null;
+        selectedStickerColor = '';
+        selectedStickerNumber = -1;
+        selectedStickerSymbol = '';
+    }
+
+
+
     //remove any canvas classes (for cursor control)
     domElements.canvas.className = '';
 
@@ -814,6 +856,8 @@ function addEventListeners(){
             }
 
             stationLayer.bringToFront();
+            textLayer.bringToFront();
+            stickerLayer.bringToFront();
             //switch active layer based on toolbox selection
             switch (toolType){
                 case TOOLS.station:
@@ -826,6 +870,9 @@ function addEventListeners(){
                     selectedToolLineNumber = lineNumber
                     lineLayer.activate();
                 break;
+                case TOOLS.sticker:
+                    stickerLayer.activate();
+                break;
 
             }
 
@@ -834,7 +881,6 @@ function addEventListeners(){
         });
     });
 
-    console.log('domElements', domElements.stickers)
     //stickers
     _.forEach(domElements.stickers, function(el){
         el.addEventListener('click', function(e){
@@ -851,6 +897,7 @@ function addEventListeners(){
                 e.target.classList.add('selected');
                 selectedStickerNumber = stickerNumber;
                 selectedStickerColor = stickerColor;
+                selectedStickerSymbol = stickerSymbol;
 
             } else{
 
@@ -859,12 +906,19 @@ function addEventListeners(){
                 e.target.classList.remove('selected');
                 selectedStickerNumber = -1;
                 selectedStickerColor = '';
+                selectedStickerSymbol = '';
             }
 
             stickerLayer.bringToFront();
 
         });
     });
+
+    //canvas
+
+    // domElements.canvas.addEventListener('mouseleave', function(e){
+    //     resetUponToolboxSelection();
+    // })
 }
 
 function initLayers(){

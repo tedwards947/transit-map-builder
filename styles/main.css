@@ -89,6 +89,7 @@ body{
     font-size:20px;
     width:25px;
     height: 25px;
+    padding:0;
 }
 #toolbox button.selected{
     /* border: 1px dashed red; */
@@ -128,6 +129,7 @@ header{
 
     letter-spacing: 2px;
     height:130px;
+    margin-left: 570px;
 }
 hr{
     /* GROSS */
