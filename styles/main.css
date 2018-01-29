@@ -1,12 +1,15 @@
 body{
     font-family: 'Helvetica';
-    background:lightgray
+    background:lightgray;
+
+    background:url('../subwaytile.jpg');
+    background-position-y: -6px;
 }
 #container{
     position:relative;
 }
 #myCanvas{
-    width:800px;
+    width:1200px;
     height: 800px;
     border: 3px solid lightgray;
     margin:5px 5px 0 0;
@@ -55,12 +58,17 @@ body{
     color:white;
     background:black;
     font-weight:bold;
+
+    border-top: 1px solid white;
+    margin: 0 -2px;
+    padding-left: 2px;
 }
 #toolbox-text-stickers{
     font-size:16px;
     color:white;
     background:black;
     font-weight:bold;
+    padding-top:5px;
 }
 
 #toolbox button{
@@ -116,7 +124,7 @@ header{
     font-size:50px;
     font-weight:bold;
 
-    /* padding-left: 2px; */
+    margin-top:-8px;
 
     letter-spacing: 2px;
     height:130px;

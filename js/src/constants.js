@@ -1,11 +1,11 @@
 var LINE_WIDTH = 10;
 var LINE_ROUNDING_RADIUS = 6;
-var CANVAS_WIDTH = 800;
+var CANVAS_WIDTH = 1200;
 var CANVAS_HEIGHT = 800;
 
 var NODE_SPACING = 10;
 var NUM_NODES = {
-    x: 80,
+    x: 120,
     y: 80
 };
 
