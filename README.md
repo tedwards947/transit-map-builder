@@ -21,6 +21,7 @@ Run this locally using a local file server:
 * add line moving
 * add text editing
 * add a way to show parallel lines
+* clean up the code, DRY it up a bit, move it to new files based on functionality
 
 ## Known issues
 * Sometimes when moving a station, an associated line won't follow

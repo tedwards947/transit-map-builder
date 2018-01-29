@@ -8,7 +8,8 @@ var textDomElements = {
 
 var _onCompleteCallback;
 
-function showTextBox(mouseCoords, onCompleteCallback){
+
+function showTextBox(mouseCoords, content, onCompleteCallback){
     //move a contenteditable div to the coordinates specified
 
     
@@ -22,7 +23,7 @@ function showTextBox(mouseCoords, onCompleteCallback){
     textDomElements.wrapper.style.top = mouseCoords.y + 'px';
 
 
-    textDomElements.inputDiv.innerText = '';
+    textDomElements.inputDiv.innerText = content || '';
     textDomElements.inputDiv.contentEditable = true;
 
 

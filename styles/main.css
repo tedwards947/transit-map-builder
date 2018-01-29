@@ -38,12 +38,31 @@ body{
     margin-left: 5px;
     margin-top:5px;
 }
+
+#toolbox-section-container{
+    display:flex;
+}
+#toolbox-section-stickers{
+    border-left: 1px solid black;
+    width: 80px;
+}
+#toolbox-section-stickers-container{
+    display:flex;
+    flex-wrap: wrap;
+}
 #toolbox-text{
     font-size:20px;
     color:white;
     background:black;
     font-weight:bold;
 }
+#toolbox-text-stickers{
+    font-size:16px;
+    color:white;
+    background:black;
+    font-weight:bold;
+}
+
 #toolbox button{
     display:block;
     border: 1px solid white;
@@ -57,6 +76,11 @@ body{
 
     height:45px;
     width: 45px;
+}
+#toolbox button.sticker{
+    font-size:20px;
+    width:25px;
+    height: 25px;
 }
 #toolbox button.selected{
     /* border: 1px dashed red; */
@@ -143,7 +167,7 @@ hr{
     position:absolute;
     left:100px;
     top: 200px;
-
+    background: white;
     border: 1px dashed black;
     padding:5px;
 

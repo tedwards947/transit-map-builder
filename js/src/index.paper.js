@@ -646,10 +646,6 @@ function onTextboxMouseDrag(e, textbox){
 }
 
 
-function doTextEdit(textbox){
-    console.log('doTextEdit', textbox);
-}
-
 function createOrEditTextNode(mouseCoords){
     //hit test?
 
@@ -658,19 +654,34 @@ function createOrEditTextNode(mouseCoords){
         return box.shape.hitTest(new Point(mouseCoords.x, mouseCoords.y))
     });
 
+    //get existing text, if it exists.
+    var existingText = _.get(hit, 'content', '');
+
     if(hit){
-        doTextEdit(hit);
-        return;
+        //override the mouse coords so that the textbox comes up at the right place,
+        //directly on top of the text, instead of where the user clicked
+
+        mouseCoords = {
+            x: hit.shape.bounds.x,
+            y: hit.shape.bounds.y
+        };
+        // console.log('bounds', );
     }
 
-
-
-    showTextBox(mouseCoords, function onComplete(text, wrapperWidth, wrapperHeight, inputLeft, inputTop){
+    showTextBox(mouseCoords, existingText, function onComplete(text, wrapperWidth, wrapperHeight, inputLeft, inputTop){
         textLayer.activate();
 
+        if(hit){
+            //hit!
+            console.log('hit! updating object');
+            hit.content = text;
+            hit.shape.content = text;
 
+            return;
+        }
         var newXPosition = mouseCoords.x + TEXT_EDIT_STYLING.borderWidth + TEXT_EDIT_STYLING.padding + 14;
         var newYPosition = mouseCoords.y + TEXT_EDIT_STYLING.borderWidth + TEXT_EDIT_STYLING.padding + 2;
+        
 
         var textItemShape = new PointText({
             content: text,
