@@ -10,9 +10,12 @@
 */
 var stationLayer;
 var lineLayer;
+var stickerLayer;
 
 var selectedTool = TOOLS.none;
 var selectedToolLineNumber = -1;
+var selectedStickerNumber = -1;
+var selectedStickerColor = '';
 
 var pathfindingGrid = new PF.Grid(CANVAS_WIDTH / NODE_SPACING, CANVAS_HEIGHT / NODE_SPACING);
 
@@ -22,7 +25,8 @@ var nodes = [];
 var domElements = {
     canvas: undefined,
     buttons: {},
-    textInput: undefined
+    textInput: undefined,
+    stickers: undefined
 };
 
 var lines = [];
@@ -762,6 +766,9 @@ function selectDomElements(){
     domElements.buttons.line6 = document.querySelector('#line-6');
 
     domElements.canvas = document.querySelector('#myCanvas');
+
+
+    domElements.stickers = Array.prototype.slice.call(document.querySelectorAll('.sticker'));
 }
 
 // function reset
@@ -776,6 +783,11 @@ function resetUponToolboxSelection(){
         el.classList.remove('selected');
     });
 
+    //remove sticker selected
+    _.forEach(domElements.stickers, function(el){
+        el.classList.remove('selected');
+    });
+
     //remove any canvas classes (for cursor control)
     domElements.canvas.className = '';
 
@@ -784,8 +796,9 @@ function resetUponToolboxSelection(){
 
 }
 function addEventListeners(){
-    _.forEach(domElements.buttons, function(el){
 
+    //toolbox buttons
+    _.forEach(domElements.buttons, function(el){
         el.addEventListener('click', function(e){
             var toolType = e.target.dataset.tool;
             var lineNumber = e.target.dataset.lineNumber;
@@ -820,14 +833,48 @@ function addEventListeners(){
 
         });
     });
+
+    console.log('domElements', domElements.stickers)
+    //stickers
+    _.forEach(domElements.stickers, function(el){
+        el.addEventListener('click', function(e){
+            var stickerSymbol = e.target.innerText;
+            var stickerNumber = e.target.dataset.stickerNumber;
+            var stickerColor = e.target.dataset.color;
+
+            resetUponToolboxSelection();
+
+            if (selectedStickerNumber !== stickerNumber) {
+                //different sticker selected, select it!
+
+                selectedTool = TOOLS.sticker;
+                e.target.classList.add('selected');
+                selectedStickerNumber = stickerNumber;
+                selectedStickerColor = stickerColor;
+
+            } else{
+
+                //same sticker selected, deselect it!
+                selectedTool = TOOLS.none;
+                e.target.classList.remove('selected');
+                selectedStickerNumber = -1;
+                selectedStickerColor = '';
+            }
+
+            stickerLayer.bringToFront();
+
+        });
+    });
 }
 
 function initLayers(){
     stationLayer = new Layer();
     lineLayer = new Layer();
     textLayer = new Layer();
+    stickerLayer = new Layer();
     stationLayer.bringToFront();
     textLayer.bringToFront();
+    stickerLayer.bringToFront();
     stationLayer.activate();
 
 }

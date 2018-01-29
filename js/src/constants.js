@@ -24,7 +24,8 @@ var TOOLS = {
     text: 'text',
     bulldozer: 'bulldozer',
     station: 'station',
-    line: 'line'
+    line: 'line',
+    sticker: 'sticker'
 };
 
 var OBJECT_TYPES = {

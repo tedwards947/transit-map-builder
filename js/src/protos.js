@@ -33,3 +33,15 @@ function TextBox(shape, realCoords, content){
 
     this.id = Math.random();
 }
+
+function Sticker(shape, realCoords, content){
+    this.type = 'sticker',
+    this.shape = shape;
+
+    this.realCoords = realCoords;
+    this.content = content;
+
+    this.isDragging = false;
+
+    this.id = Math.random();
+}
