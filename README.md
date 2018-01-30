@@ -7,6 +7,8 @@ Run this locally using a local file server:
 * Python's `http-serve`
 * Node's `http-server` (install with `npm install http-server -g`)
 
+**See it running live at <a href="http://jscript.guru/transitmapbuilder">jscript.guru/transitmapbuilder</a>**
+
 ## Development 
 * This Project uses <a href="https://github.com/paperjs/paper.js">Paper.js</a> for graphics and <a href="https://github.com/qiao/PathFinding.js/">pathfinding.js</a> for pathfinding used in line drawing. Please read up on them a bit. 
 * <a href="http://paperjs.org/tutorials/getting-started/working-with-paper-js/">Paper.js and its basic API</a>
