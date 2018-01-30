@@ -87,8 +87,8 @@ body{
 }
 #toolbox button.sticker{
     font-size:20px;
-    width:25px;
-    height: 25px;
+    width:30px;
+    height: 30px;
     padding:0;
 }
 #toolbox button.selected{
@@ -202,4 +202,13 @@ hr{
     font-weight:bold;
     min-width:30px;
     font-size: 16px;
+}
+
+
+.github-button,
+iframe{
+    /* this is the github button thing */
+    position:absolute;
+    right: 20px;
+    top: 3px;
 }
