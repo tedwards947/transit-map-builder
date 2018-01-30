@@ -34,6 +34,7 @@ var domElements = {
 var lines = [];
 var currentLine;
 var stations = [];
+var stickers = [];
 var textBoxes = [];
 
 var tools = [];
@@ -244,13 +245,79 @@ function deleteStation(stationObj){
     delete stationObj;
 }
 
+function onStickerClick(e, sticker){
+    switch (selectedTool){
+        case TOOLS.selectMove:
+            deselectAllItems();
 
+            sticker.shape.fullySelected = true;
+        
+            //change the mouse cursor to be 'move'
+            domElements.canvas.className = 'move';
+        break;
+    }
+}
+function onStickerMouseDown(e, sticker){
+    if(sticker.shape.selected){
+        sticker.isDragging = true;
+    }
+}
+function onStickerMouseUp(e, sticker){
+    sticker.isDragging = false;
+}
+function onStickerMouseDrag(e, sticker){
+
+    if(sticker.isDragging){
+
+        var newMouseCoords = e.point;
+
+        if(newMouseCoords.x === sticker.realCoords.x && newMouseCoords.y === sticker.realCoords.y){
+            //short circuit because the position hasn't changed.
+            return;
+        }
+        console.log('mousdrag')
+        //move the sticker!
+        sticker.realCoords.x = newMouseCoords.x;
+        sticker.realCoords.y = newMouseCoords.y;
+
+        sticker.shape.position = new Point(newMouseCoords.x, newMouseCoords.y);
+
+    }
+
+}
 function createSticker(mouseCoords){
 
     var shape = stickerFollowingMouse.clone();
     var stickerObj = new Sticker(shape, mouseCoords, selectedStickerSymbol);
 
+
+    stickers.push(stickerObj);
     //add event listeners!
+
+
+    shape.onClick = function _onStickerClick(e){
+        onStickerClick(e, stickerObj);
+    };
+
+    shape.onMouseDown = function _onStickerMouseDown(e){
+        onStickerMouseDown(e, stickerObj);
+    };
+
+    shape.onMouseUp = function _onStickerMouseUp(e){
+        onStickerMouseUp(e, stickerObj);
+    };
+    
+    shape.onMouseDrag = function _onStickerMouseDrag(e){
+        onStickerMouseDrag(e, stickerObj);
+    };
+
+    shape.onMouseEnter = function _onStickerMouseEnter(e){
+        onShapeMouseEnterForCursorSetting(e, stickerObj);
+    };
+
+    shape.onMouseLeave = function _onStickerMouseLeave(e){
+        onShapeMouseLeaveForCursorSetting(e, stickerObj);
+    };
 
 }
 
@@ -416,8 +483,6 @@ function deselectAllItems(){
     });
 }
 
-
-//CHANGE THIS TO BE instead powered by the moment
 function onStationClick(e, station){
     //only perform selection if the select tool is... welll... selected!
 
