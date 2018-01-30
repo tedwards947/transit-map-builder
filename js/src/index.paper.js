@@ -170,7 +170,7 @@ function bulldoze(mouseCoords){
     //look for items whose shapes pass a hit test
 
     //concat all the lines, stations, and textboxes, then loop through them
-    _.forEach(_.concat(lines, stations, textBoxes), function (obj){
+    _.forEach(_.concat(lines, stations, textBoxes, stickers), function (obj){
 
         //get their shape, do a hit test
 
@@ -187,6 +187,9 @@ function bulldoze(mouseCoords){
                 case 'textbox':
                     deleteTextBox(obj);
                 break;
+                case 'sticker':
+                    deleteSticker(obj);
+                break;
             }
 
             //reset the cursor to not be teh crosshair kind
@@ -199,7 +202,6 @@ function deleteLine(lineObj){
     var id = lineObj.id;
 
     _.remove(lines, function(line){
-        console.log('loop')
         return id === line.id;
     });
 
@@ -217,6 +219,17 @@ function deleteTextBox(textBoxObj){
     textBoxObj.shape.remove();
 
     delete textBoxObj;
+}
+function deleteSticker(stickerObj){
+    var id = stickerObj.id;
+
+    _.remove(stickers, function(_sticker){
+        return id === _sticker.id;
+    });
+
+    stickerObj.shape.remove();
+
+    delete stickerObj;
 }
 function deleteStation(stationObj){
 

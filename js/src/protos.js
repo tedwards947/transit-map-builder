@@ -35,7 +35,7 @@ function TextBox(shape, realCoords, content){
 }
 
 function Sticker(shape, realCoords, content){
-    this.type = 'sticker',
+    this.type = 'sticker';
     this.shape = shape;
 
     this.realCoords = realCoords;
